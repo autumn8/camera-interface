@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import axios from "@/axios";
+
 
 
 export default {
@@ -23,11 +23,7 @@ export default {
   },
   methods: {
     toggleCameraStatus() {
-      this.isCameraOn = !this.isCameraOn;      
-      axios
-        .post('camera-status', {isCameraOn: this.isCameraOn})
-        .then(response => this.isCameraOn = response.data.isCameraOn)
-        .catch(error => console.log(error));
+      this.isCameraOn = !this.isCameraOn;            
     }
   }
 };
