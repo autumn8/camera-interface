@@ -2,36 +2,52 @@
   <v-content>
     <v-layout align-center justify-center>
       <v-flex xs11 sm8 md4>
-        <h2>Settings</h2>  
+        <h2>Settings</h2>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field prepend-icon="router"  v-model="mqttHostAddress" :rules="mqttHostAddressRules" label="MQTT Host" required></v-text-field>
+          <v-text-field
+            prepend-icon="router"
+            v-model="mqttHostAddress"
+            :rules="mqttHostAddressRules"
+            label="MQTT Host"
+            required
+          ></v-text-field>
 
-          <v-text-field prepend-icon="settings_input_svideo" v-model="mqttHostPort" :rules="mqttHostPortRules" label="MQTT Port" required></v-text-field>
+          <v-text-field
+            prepend-icon="settings_input_svideo"
+            v-model="mqttHostPort"
+            :rules="mqttHostPortRules"
+            label="MQTT Port"
+            required
+          ></v-text-field>
 
-          <v-btn :disabled="!valid" color="success" @click="saveSettings">Save</v-btn>
+          <v-btn :disabled="!valid" color="success" @click="saveSettings"
+            >Save</v-btn
+          >
         </v-form>
       </v-flex>
     </v-layout>
   </v-content>
 </template>
 
-
 <script>
-const urlReg = '(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?';
+const urlReg =
+  "(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?";
 export default {
   data() {
     return {
       mqttHostAddress: "mqtt://localhost",
-      mqttHostPort : "1883",
-      valid: true,     
+      mqttHostPort: "1883",
+      valid: true,
       mqttHostAddressRules: [
-        v => !!v || 'MQTT Host address is required'/* ,
+        v =>
+          !!v ||
+          "MQTT Host address is required" /* ,
         v => v.match(urlReg)|| 'Must be a valid url' */
-      ],      
-      mqttHostPortRules: [
-        v => !!v || 'MQTT Port required',
-        v => v.match(`^[0-9]+$`) || 'E-mail must be valid'
       ],
+      mqttHostPortRules: [
+        v => !!v || "MQTT Port required",
+        v => v.match(`^[0-9]+$`) || "E-mail must be valid"
+      ]
     };
   },
   mounted() {
@@ -41,18 +57,17 @@ export default {
     if (localStorage.mqttHostPort) {
       this.mqttHostPort = localStorage.mqttHostPort;
     }
-    
   },
   methods: {
-      saveSettings() {
-          localStorage.mqttHostAddress = this.mqttHostAddress;
-          localStorage.mqttHostPort = this.mqttHostPort;
-      }
+    saveSettings() {
+      localStorage.mqttHostAddress = this.mqttHostAddress;
+      localStorage.mqttHostPort = this.mqttHostPort;
+    }
   }
 };
 </script>
 <style scoped>
 h2 {
-    margin: 4vh auto;
+  margin: 4vh auto;
 }
 </style>
