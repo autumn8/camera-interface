@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <v-navigation-drawer v-model="drawer" app>
+      <v-navigation-drawer v-model="drawer" app :scroll-off-screen="true">
         <v-toolbar flat class="transparent">
           <v-list-tile-content>
             <v-list-tile-title>NIGHTWATCH</v-list-tile-title>
@@ -25,24 +25,20 @@
         </v-list>
       </v-navigation-drawer>
       <v-toolbar color="teal">
-        <v-toolbar-side-icon
-          @click.stop="drawer = !drawer"
-          class="menu"
-        ></v-toolbar-side-icon>
+        <v-toolbar-side-icon @click.stop="drawer = !drawer" class="menu"></v-toolbar-side-icon>
         <v-layout justify-center>
           <v-icon class="text-md-center" large>security</v-icon>
         </v-layout>
       </v-toolbar>
-      <img ref="camera1Stream" />
-      <router-view></router-view>
+      <img ref="camera1Stream">
+      <router-view></router-view>      
     </v-app>
   </div>
 </template>
 
 <script>
-import mqtt from '@/mqtt';
+import mqtt from "@/mqtt";
 import OnOff from "@/components/OnOff.vue";
-
 
 export default {
   name: "app",
@@ -69,11 +65,10 @@ export default {
     };
   },
   mounted() {
+    mqtt.init();
     mqtt.client.on("message", (topic, message) => {
-        this.frame =
-        "data:image/jpeg;base64," + message.toString("base64");
-        });
-    
+      this.frame = "data:image/jpeg;base64," + message.toString("base64");
+    });
   }
 };
 </script>

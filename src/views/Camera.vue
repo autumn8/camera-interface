@@ -1,41 +1,74 @@
 <template>
-  <v-layout>
-    <v-flex xs12 sm6 offset-sm3>
-      <v-card>
-        <v-img src="https://cdn.vuetifyjs.com/images/cards/desert.jpg"></v-img>
+  <v-layout justify-center>
+    <v-flex xs12 sm6>
+      <v-container fluid grid-list-md>
+        <v-layout row wrap>
+          <v-flex>
+            <v-card>
+              <div class="camera-container">
+                  <v-img :src="frame" height="300px" aspect-ratio="0.25"></v-img>
+                  <canvas
+                    class="camera__canvas"
+                    id="camera__canvas"
+                    ref="camera1DetectionZone"
+                    width="300px"
+                    height="300px"
+                  ></canvas>
+              </div>
+              
 
-        <v-card-title primary-title>
-          <div>
-            <h3 class="headline mb-0">Camera {{ this.$route.params.id }}</h3>
-          </div>
-        </v-card-title>
+              <v-card-actions>
+                <span class="camera-name">CAMERA {{ index }}</span>
+                <v-spacer></v-spacer>
+              </v-card-actions>
 
-        <v-card-actions>
-          <v-switch
-            v-model="isDetectionEnabled"
-            :label="`Detection: ${isDetectionEnabled ? 'enabled' : 'disabled'}`"
-          ></v-switch>
+              <v-container>
+                <v-layout>
+                  <v-switch
+                    v-model="isDetectionEnabled"
+                    :label="`Intruder detection is ${isDetectionEnabled ? 'on' : 'off'}`"
+                  ></v-switch>
+                  <div class="info-icon-container">
+                      <v-btn icon @click="showDetectionZoneInfo">
+                    <v-icon class="stuff" color="teal">info</v-icon>
+                  </v-btn>
+                  </div>
+                  
+                </v-layout>
 
-          <v-switch
-            v-if="isDetectionEnabled"
-            v-model="isZonesEnabled"
-            :label="`Zones: ${isZonesEnabled ? 'enabled' : 'disabled'}`"
-          ></v-switch>
-        </v-card-actions>
+                <v-layout >
+                  <v-switch
+                    :disabled="!isDetectionEnabled" :class="{'half-opacity' : !isDetectionEnabled}"
+                    v-model="isZonesEnabled"
+                    :label="`Zones are ${isZonesEnabled ? 'on' : 'off'}`"
+                  ></v-switch>
+                  <v-btn icon @click="showDetectionZoneInfo">
+                    <v-icon class="stuff" color="teal">info</v-icon>
+                  </v-btn>
+                </v-layout>
+                <div class="text-xs-center">
+                <v-btn color="success" @click="saveSettings">Save</v-btn>
+              </div>
+              </v-container>
 
-        <div>
-          Camera page
-          <div class="camera1">
-            <canvas
-              class="camera1__canvas"
-              id="camera1__canvas"
-              ref="camera1DetectionZone"
-              width="300px"
-              height="300px"
-            ></canvas>
-          </div>
-        </div>
-      </v-card>
+              
+
+              <!-- <div>
+                
+                <div class="camera1">
+                  <canvas
+                    class="camera1__canvas"
+                    id="camera1__canvas"
+                    ref="camera1DetectionZone"
+                    width="300px"
+                    height="300px"
+                  ></canvas>
+                </div>
+              </div>-->
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
     </v-flex>
   </v-layout>
 </template>
@@ -45,8 +78,12 @@ export default {
   data() {
     return {
       isDetectionEnabled: false,
-      isZonesEnabled: false
+      isZonesEnabled: false,
+      frame: require("@/assets/image-placeholder.png")
     };
+  },
+  methods: {
+    showDetectionZoneInfo() {}
   },
   mounted() {
     const canvas = this.$refs.camera1DetectionZone;
@@ -54,9 +91,10 @@ export default {
     let startX = null;
     let startY = null;
     const onPointerDown = e => {
+        console.log(e.touches[0]);
       const event = e.touches[0];
-      startX = event.clientX - event.target.offsetLeft;
-      startY = event.clientY - event.target.offsetTop;
+      startX = event.clientX;
+      startY = event.clientY;
     };
 
     const onPointerUp = e => {
@@ -64,10 +102,10 @@ export default {
     };
 
     const onPointerMove = e => {
+      e.preventDefault();
       context.clearRect(0, 0, 300, 300);
       context.globalAlpha = 0.5;
-      if (startX < 10) startX = 0;
-      if (startY < 10) startY = 0;
+      
       const endX = e.touches[0].clientX - startX - event.target.offsetLeft;
       const endY = e.touches[0].clientY - startY - event.target.offsetTop;
       context.fillRect(startX, startY, endX, endY);
@@ -82,3 +120,26 @@ export default {
   }
 };
 </script>
+
+
+<style>
+.info-icon-container{
+    margin-top:8px;
+}
+
+.half-opacity {
+    opacity: 0.5;
+}
+
+.camera-container {
+    position:relative;
+}
+
+.camera__canvas{
+    scroll:none;
+    position: absolute;
+    top:0;
+    left:0;
+}
+</style>
+

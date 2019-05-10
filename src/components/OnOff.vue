@@ -4,26 +4,23 @@
       class="on-off__toggle-btn"
       @click="toggleCameraStatus()"
       v-bind:class="{ 'start-camera': !isCameraOn, 'stop-camera': isCameraOn }"
-    >{{isCameraOn ? 'Stop': 'Start'}}</button>
+    >
+      {{ isCameraOn ? "Stop" : "Start" }}
+    </button>
   </div>
 </template>
 
 <script>
-
-
-
 export default {
   data() {
     return {
       isCameraOn: false
     };
   },
-  created() {
-
-  },
+  created() {},
   methods: {
     toggleCameraStatus() {
-      this.isCameraOn = !this.isCameraOn;            
+      this.isCameraOn = !this.isCameraOn;
     }
   }
 };

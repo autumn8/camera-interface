@@ -4,16 +4,14 @@
       <v-flex xs11 sm8 md4>
         <h2>Settings</h2>
         <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field
-            prepend-icon="router"
+          <v-text-field            
             v-model="mqttHostAddress"
-            :rules="mqttHostAddressRules"
+            :rules="mqttHostAddressRules"            
             label="MQTT Host"
             required
           ></v-text-field>
 
-          <v-text-field
-            prepend-icon="settings_input_svideo"
+          <v-text-field            
             v-model="mqttHostPort"
             :rules="mqttHostPortRules"
             label="MQTT Port"

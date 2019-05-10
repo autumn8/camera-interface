@@ -1,47 +1,32 @@
 <template>
   <v-layout justify-center>
     <v-flex xs12 sm6>
-      <v-card>
-        <v-container fluid grid-list-md>            
+      
+        <v-container fluid grid-list-md>
           <v-layout row wrap>
             <v-flex
               v-for="(card, index) in cards"
               :key="card.title"
               v-bind="{ [`xs${card.flex}`]: true }"
             >
-              <v-card>
-                <v-img :src="frame" height="300px" aspect-ratio="0.25">
-                </v-img>
-
-                <v-card-actions>
-                  <span class="camera-name">CAMERA {{ index }}</span>
-                  <v-spacer></v-spacer>
-                  <v-btn icon>
-                    <v-icon>portrait</v-icon>
-                  </v-btn>
-                  <v-btn icon>
-                    <v-icon>crop_free</v-icon>
-                  </v-btn>
-                  <v-btn icon :to="'/camera/' + index">
-                    <v-icon>edit</v-icon>
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
+              <compact-camera :index="index"></compact-camera>
             </v-flex>
           </v-layout>
         </v-container>
-      </v-card>
+      
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import CompactCamera from '@/components/CompactCamera';
 
-
-export default {      
+export default { 
+    components : {
+    'compact-camera': CompactCamera
+  } ,     
   data() {
-    return {
-      frame: require('@/assets/image-placeholder.png'),        
+    return {            
       cards: [
         {
           title: "Pre-fab homes",
