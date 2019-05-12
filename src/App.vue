@@ -82,7 +82,11 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-size: 16px;
+  font-size: 16px;  
+}
+
+#app {
+  background-color: grey;
 }
 .camera1__canvas {
   background-color: red;

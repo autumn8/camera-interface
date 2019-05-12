@@ -3,7 +3,7 @@
     <v-img :src="frame" height="300px" aspect-ratio="0.25"></v-img>
 
     <v-card-actions>
-      <span class="camera-name">CAMERA {{ index }}</span>
+      <span class="camera-name"> {{ camera.name }}</span>
       <v-spacer></v-spacer>
       <v-btn v-model="detectionEnabled" icon @click="detectionEnabled = !detectionEnabled">
         <v-icon :color="detectionEnabledClass">portrait</v-icon>
@@ -13,7 +13,7 @@
         <v-icon :color="detectionZoneEnabledClass">crop_free</v-icon>
       </v-btn>-->
       
-      <v-btn icon :to="'/camera/' + index">
+      <v-btn icon :to="`/camera/${camera.name}`">
         <v-icon>edit</v-icon>
       </v-btn>
     </v-card-actions>
@@ -22,7 +22,7 @@
 
 <script>
 export default {
-  props: ['index'],
+  props: ['camera'],
   computed: {
     detectionEnabledClass() {
       return this.detectionEnabled ? 'green' : 'dark-grey'
