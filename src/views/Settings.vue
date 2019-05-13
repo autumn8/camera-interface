@@ -1,7 +1,8 @@
 <template>
   <v-content>
-    <v-layout align-center justify-center>
-      <v-flex xs11 sm8 md4>
+    <v-container fluid fill-height>
+      <v-layout align-start justify-center class='settings'>
+      <v-flex xs11 sm8 md4 align-start>
         <h2>Settings</h2>
         <v-form ref="form" v-model="valid" lazy-validation>
           <v-text-field            
@@ -24,7 +25,11 @@
         </v-form>
       </v-flex>
     </v-layout>
+    </v-container>
+    
   </v-content>
+
+  
 </template>
 
 <script>
@@ -67,5 +72,8 @@ export default {
 <style scoped>
 h2 {
   margin: 4vh auto;
+}
+.settings{
+  background-color: white;
 }
 </style>
