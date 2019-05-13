@@ -1,40 +1,35 @@
 <template>
   <v-content>
     <v-container fluid fill-height>
-      <v-layout align-start justify-center class='settings'>
-      <v-flex xs11 sm8 md4 align-start>
-        <h2>Settings</h2>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field            
-            v-model="mqttHostAddress"
-            :rules="mqttHostAddressRules"            
-            label="MQTT Host"
-            required
-          ></v-text-field>
+      <v-layout align-start justify-center class="settings">
+        <v-flex xs11 sm8 md4 align-start>
+          <h2>Settings</h2>
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-text-field
+              v-model="mqttHostAddress"
+              :rules="mqttHostAddressRules"
+              label="MQTT Host"
+              required
+            ></v-text-field>
 
-          <v-text-field            
-            v-model="mqttHostPort"
-            :rules="mqttHostPortRules"
-            label="MQTT Port"
-            required
-          ></v-text-field>
+            <v-text-field
+              v-model="mqttHostPort"
+              :rules="mqttHostPortRules"
+              label="MQTT Port"
+              required
+            ></v-text-field>
 
-          <v-btn :disabled="!valid" color="success" @click="saveSettings"
-            >Save</v-btn
-          >
-        </v-form>
-      </v-flex>
-    </v-layout>
+            <v-btn :disabled="!valid" color="success" @click="saveSettings"
+              >Save</v-btn
+            >
+          </v-form>
+        </v-flex>
+      </v-layout>
     </v-container>
-    
   </v-content>
-
-  
 </template>
 
 <script>
-const urlReg =
-  "(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?";
 export default {
   data() {
     return {
@@ -73,7 +68,7 @@ export default {
 h2 {
   margin: 4vh auto;
 }
-.settings{
+.settings {
   background-color: white;
 }
 </style>
