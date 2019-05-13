@@ -12,7 +12,6 @@ import "vuetify/dist/vuetify.min.css"; // Ensure you are using css-loader
 Vue.use(VueRouter);
 Vue.use(Vuetify);
 
-
 Vue.config.productionTip = false;
 
 const router = new VueRouter({
@@ -25,7 +24,6 @@ const router = new VueRouter({
 
 new Vue({
   store,
-  router,  
+  router,
   render: h => h(App)
 }).$mount("#app");
-
