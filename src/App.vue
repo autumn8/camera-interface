@@ -25,28 +25,26 @@
         </v-list>
       </v-navigation-drawer>
       <v-toolbar color="teal">
-        <v-toolbar-side-icon @click.stop="drawer = !drawer" class="menu"></v-toolbar-side-icon>
+        <v-toolbar-side-icon
+          @click.stop="drawer = !drawer"
+          class="menu"
+        ></v-toolbar-side-icon>
         <v-layout justify-center>
           <v-icon class="text-md-center" large>security</v-icon>
         </v-layout>
-      </v-toolbar>
-      <img ref="camera1Stream">
-      <router-view></router-view>      
+      </v-toolbar>            
+      <router-view></router-view>
     </v-app>
   </div>
 </template>
 
 <script>
 import mqtt from "@/mqtt";
-import OnOff from "@/components/OnOff.vue";
 
 export default {
   name: "app",
-  components: {
-    OnOff
-  },
   data() {
-    return {
+    return {      
       image: null,
       xpos: 0,
       drawer: null,
@@ -82,7 +80,7 @@ html,
 body {
   margin: 0;
   padding: 0;
-  font-size: 16px;  
+  font-size: 16px;
 }
 
 #app {
