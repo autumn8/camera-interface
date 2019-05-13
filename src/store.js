@@ -12,10 +12,11 @@ export default new Vuex.Store({
             if (!state.cameras.includes(camera)) {
                 state.cameras.push({
                     name: camera,
-                    detectionEnabled: false,
-                    zoneEnabled: false
+                    isDetectionEnabled: true,
+                    isZoneEnabled: false
                     
                 });
+                console.log(this.state.cameras)
             }
 
         }

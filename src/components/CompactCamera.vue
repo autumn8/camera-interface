@@ -5,7 +5,7 @@
     <v-card-actions>
       <span class="camera-name"> {{ camera.name }}</span>
       <v-spacer></v-spacer>
-      <v-btn v-model="detectionEnabled" icon @click="detectionEnabled = !detectionEnabled">
+      <v-btn v-model="camera.isDetectionEnabled" icon @click="toggleIsDetectionEnabled">
         <v-icon :color="detectionEnabledClass">portrait</v-icon>
       </v-btn>
 
@@ -13,7 +13,7 @@
         <v-icon :color="detectionZoneEnabledClass">crop_free</v-icon>
       </v-btn>-->
       
-      <v-btn icon :to="`/camera/${camera.name}`">
+      <v-btn icon :to="`/camera/${index}`">
         <v-icon>edit</v-icon>
       </v-btn>
     </v-card-actions>
@@ -21,20 +21,27 @@
 </template>
 
 <script>
+
 export default {
-  props: ['camera'],
-  computed: {
+  props: ['index'],
+  computed: {    
     detectionEnabledClass() {
-      return this.detectionEnabled ? 'green' : 'dark-grey'
+      return this.camera.isDetectionEnabled ? 'green' : 'dark-grey'
     },
     detectionZoneEnabledClass() {
-      return this.detectionZoneEnabled ? 'green' : 'dark-grey'
+      return this.camera.isDetectionZoneEnabled ? 'green' : 'dark-grey'
+    },
+    camera() {
+      return this.$store.state.cameras[this.index]
+    }
+  },
+  methods:{
+    toggleIsDetectionEnabled() {
+      this.camera.isDetectionEnabled = !this.camera.isDetectionEnabled;
     }
   },
   data() {
-    return {
-      detectionEnabled : false,
-      detectionZoneEnabled: false,
+    return {      
       frame: require('@/assets/image-placeholder.png')  
     }
   }

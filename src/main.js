@@ -18,7 +18,7 @@ Vue.config.productionTip = false;
 const router = new VueRouter({
   routes: [
     { path: "/settings", component: Settings },
-    { path: "/camera/:name", component: Camera },
+    { path: "/camera/:index", component: Camera },
     { path: "/", component: Home }
   ]
 });

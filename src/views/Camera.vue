@@ -18,15 +18,15 @@
               
 
               <v-card-actions>
-                <span class="camera-name">CAMERA {{ index }}</span>
+                <span class="camera-name">{{ camera.name }}</span>
                 <v-spacer></v-spacer>
               </v-card-actions>
 
               <v-container>
                 <v-layout>
                   <v-switch
-                    v-model="isDetectionEnabled"
-                    :label="`Intruder detection is ${isDetectionEnabled ? 'on' : 'off'}`"
+                    v-model="camera.isDetectionEnabled"                    
+                    :label="`Intruder detection is ${camera.isDetectionEnabled ? 'on' : 'off'}`"
                   ></v-switch>
                   <div class="info-icon-container">
                       <v-btn icon @click="showDetectionZoneInfo">
@@ -38,17 +38,17 @@
 
                 <v-layout >
                   <v-switch
-                    :disabled="!isDetectionEnabled" :class="{'half-opacity' : !isDetectionEnabled}"
-                    v-model="isZonesEnabled"
-                    :label="`Zones are ${isZonesEnabled ? 'on' : 'off'}`"
+                    :disabled="!camera.isDetectionEnabled" :class="{'half-opacity' : !camera.isDetectionEnabled}"
+                    v-model="camera.isZoneEnabled"
+                    :label="`Zones are ${camera.isZoneEnabled ? 'on' : 'off'}`"
                   ></v-switch>
                   <v-btn icon @click="showDetectionZoneInfo">
                     <v-icon class="stuff" color="teal">info</v-icon>
                   </v-btn>
                 </v-layout>
-                <div class="text-xs-center">
+                <!-- <div class="text-xs-center">
                 <v-btn color="success" @click="saveSettings">Save</v-btn>
-              </div>
+              </div> -->
               </v-container>
 
               
@@ -74,11 +74,16 @@
 </template>
 
 <script>
+
+//$route.params.id
 export default {
+    computed: {
+        camera() {
+            return this.$store.state.cameras[this.$route.params.index]
+        }        
+    },
   data() {
-    return {
-      isDetectionEnabled: false,
-      isZonesEnabled: false,
+    return {      
       frame: require("@/assets/image-placeholder.png")
     };
   },
@@ -86,7 +91,7 @@ export default {
     showDetectionZoneInfo() {}
   },
   mounted() {
-    const canvas = this.$refs.camera1DetectionZone;
+    /* const canvas = this.$refs.camera1DetectionZone;
     const context = this.$refs.camera1DetectionZone.getContext("2d");
     let startX = null;
     let startY = null;
@@ -116,7 +121,7 @@ export default {
     canvas.addEventListener("touchstart", onPointerDown, false);
     canvas.addEventListener("touchend", onPointerUp, false);
 
-    canvas.addEventListener("touchmove", onPointerMove, false);
+    canvas.addEventListener("touchmove", onPointerMove, false); */
   }
 };
 </script>

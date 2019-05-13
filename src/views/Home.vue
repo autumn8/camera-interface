@@ -7,7 +7,7 @@
             v-for="(camera,index) in cameras"
             :key="index"            
           >
-            <compact-camera :camera="camera"></compact-camera>
+            <compact-camera :index="index"></compact-camera>
           </v-flex>
         </v-layout>
       </v-container>
