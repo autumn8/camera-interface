@@ -3,10 +3,7 @@
     <v-flex xs12 sm6>
       <v-container fluid grid-list-md>
         <v-layout row wrap>
-          <v-flex
-            v-for="(camera,index) in cameras"
-            :key="index"            
-          >
+          <v-flex v-for="(camera, index) in cameras" :key="index">
             <compact-camera :index="index"></compact-camera>
           </v-flex>
         </v-layout>
@@ -17,17 +14,15 @@
 
 <script>
 import CompactCamera from "@/components/CompactCamera";
-import { mapState } from 'vuex';
-
 
 export default {
   components: {
     "compact-camera": CompactCamera
   },
   computed: {
-      cameras() {
-          return this.$store.state.cameras
-      }
+    cameras() {
+      return this.$store.state.cameras;
+    }
   }
 };
 </script>
