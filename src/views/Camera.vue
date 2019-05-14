@@ -8,12 +8,31 @@
               <div class="camera-container">
                 <v-img :src="currentFrame || placeHolder" height="300px" aspect-ratio="0.25"></v-img>
 
-                <div v-if="camera.isZoneEnabled" class="zone-overlay" 
+                <VueDragResize
+                  class="zone-overlay"
+                  :isActive="true"
+                  :parentLimitation="true"
+                  :w="200"
+                  :h="200"
+                  v-on:resizing="resize"
+                  v-on:dragging="resize"
+                >
+                  
+                  <p>TOP: {{ top }}</p>
+                  <p>LEFT: {{ left }}</p>
+                  <p>WIDTH: {{ width }}</p>
+                  <p>HEIGHT: {{ height }}</p>
+                </VueDragResize>
+
+                <!-- <div
+                  v-if="camera.isZoneEnabled"
+                  class="zone-overlay"
                   v-bind:style="{ 
                     width: zoneWidth + 'px', 
                     left: zoneLeft + 'px',
                     top: zoneTop + 'px', 
-                    height: zoneHeight + 'px'}"></div>
+                    height: zoneHeight + 'px'}"
+                ></div> -->
               </div>
 
               <v-card-actions>
@@ -52,15 +71,29 @@
                 <v-layout v-if="camera.isZoneEnabled">
                   <v-flex xs12>
                     <v-flex>
-                      <v-range-slider @input="calculateZone" v-model="zoneXCoords" label="Left - Right" :max="345" :min="0" :step="10"></v-range-slider>
+                      <v-range-slider
+                        @input="calculateZone"
+                        v-model="zoneXCoords"
+                        label="Left - Right"
+                        :max="345"
+                        :min="0"
+                        :step="10"
+                      ></v-range-slider>
                     </v-flex>
                     <v-flex>
-                      <v-range-slider @input="calculateZone" v-model="zoneYCoords" label="Top - Bottom" :max="300" :min="0" :step="10"></v-range-slider>
-                    </v-flex>                    
+                      <v-range-slider
+                        @input="calculateZone"
+                        v-model="zoneYCoords"
+                        label="Top - Bottom"
+                        :max="300"
+                        :min="0"
+                        :step="10"
+                      ></v-range-slider>
+                    </v-flex>
                   </v-flex>
                 </v-layout>
                 <div class="text-xs-center">
-                <v-btn color="success" @click="saveSettings">Save</v-btn>
+                  <v-btn color="success" @click="saveSettings">Save</v-btn>
                 </div>
               </v-container>
             </v-card>
@@ -72,20 +105,28 @@
 </template>
 
 <script>
+import VueDragResize from "vue-drag-resize";
 import eventBus from "@/eventBus";
 
 export default {
+  components: {
+    VueDragResize
+  },
   data() {
     return {
-      zoneWidth:0,
-      zoneHeight:0,
+      zoneWidth: 0,
+      zoneHeight: 0,
       zoneTop: 0,
-      zoneLeft:0,
+      zoneLeft: 0,
       zoneXCoords: [0, 200],
-      zoneYCoords: [150, 250],      
+      zoneYCoords: [150, 250],
       currentFrame: null,
       frameEvent: null,
-      placeHolder: require("@/assets/image-placeholder.png")
+      placeHolder: require("@/assets/image-placeholder.png"),
+      width: 0,
+      height: 0,
+      top: 0,
+      left: 0
     };
   },
   computed: {
@@ -96,26 +137,30 @@ export default {
   methods: {
     calculateZone() {
       this.zoneLeft = this.zoneXCoords[0];
-      this.zoneWidth  = this.zoneXCoords[1] - this.zoneXCoords[0]; 
+      this.zoneWidth = this.zoneXCoords[1] - this.zoneXCoords[0];
       this.zoneTop = this.zoneYCoords[0];
-      this.zoneHeight  = this.zoneYCoords[1] - this.zoneYCoords[0];                 
+      this.zoneHeight = this.zoneYCoords[1] - this.zoneYCoords[0];
     },
     showDetectionZoneInfo() {},
-    saveSettings() {
-
+    saveSettings() {},
+    resize(newRect) {
+      this.width = newRect.width;
+      this.height = newRect.height;
+      this.top = newRect.top;
+      this.left = newRect.left;
     }
   },
   mounted() {
-    this.frameEvent = `camera/frame/${this.camera.name}`
-    eventBus.$on(this.frameEvent, (currentFrame) => {
-      console.log('got a frame');
-      this.currentFrame = currentFrame;      
-    })
+    this.frameEvent = `camera/frame/${this.camera.name}`;
+    eventBus.$on(this.frameEvent, currentFrame => {
+      console.log("got a frame");
+      this.currentFrame = currentFrame;
+    });
     this.calculateZone();
   },
   beforeDestroy() {
     console.log(this);
-    console.log('destroy');
+    console.log("destroy");
     eventBus.$off(this.frameEvent);
   }
 };
@@ -134,7 +179,7 @@ export default {
   position: relative;
 }
 
-.zone-overlay {  
+.zone-overlay {
   position: absolute;
   width: 150px;
   height: 150px;
