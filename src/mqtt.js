@@ -24,6 +24,7 @@ function init() {
         client.subscribe(`camera/frame/${cameraName}`);
         return;
       }
+      if (payload ==0) eventBus.$emit(`camera/frame/${cameraName}`, null);
     }
     if (topic.includes("camera/frame")) {
       const routeSegments = topic.split("/");
