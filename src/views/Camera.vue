@@ -7,13 +7,13 @@
             <v-card>
               <div class="camera-container">
                 <v-img :src="currentFrame || placeHolder" height="300px" aspect-ratio="0.25"></v-img>
-                <canvas
-                  class="camera__canvas"
-                  id="camera__canvas"
-                  ref="camera1DetectionZone"
-                  width="300px"
-                  height="300px"
-                ></canvas>
+
+                <div v-if="camera.isZoneEnabled" class="zone-overlay" 
+                  v-bind:style="{ 
+                    width: zoneWidth + 'px', 
+                    left: zoneLeft + 'px',
+                    top: zoneTop + 'px', 
+                    height: zoneHeight + 'px'}"></div>
               </div>
 
               <v-card-actions>
@@ -48,16 +48,21 @@
                   <v-btn icon @click="showDetectionZoneInfo">
                     <v-icon class="stuff" color="teal">info</v-icon>
                   </v-btn>
-
+                </v-layout>
+                <v-layout v-if="camera.isZoneEnabled">
                   <v-flex xs12>
-                    <v-slider v-model="slider" label="Label"></v-slider>
+                    <v-flex>
+                      <v-range-slider @input="calculateZone" v-model="zoneXCoords" label="Left - Right" :max="345" :min="0" :step="10"></v-range-slider>
+                    </v-flex>
+                    <v-flex>
+                      <v-range-slider @input="calculateZone" v-model="zoneYCoords" label="Top - Bottom" :max="300" :min="0" :step="10"></v-range-slider>
+                    </v-flex>                    
                   </v-flex>
                 </v-layout>
                 <!-- <div class="text-xs-center">
                 <v-btn color="success" @click="saveSettings">Save</v-btn>
                 </div>-->
               </v-container>
-              
             </v-card>
           </v-flex>
         </v-layout>
@@ -71,9 +76,15 @@
 export default {
   data() {
     return {
+      zoneWidth:0,
+      zoneHeight:0,
+      zoneTop: 0,
+      zoneLeft:0,
+      zoneXCoords: [0, 200],
+      zoneYCoords: [150, 250],      
       currentFrame: null,
       placeHolder: require("@/assets/image-placeholder.png")
-    }
+    };
   },
   computed: {
     camera() {
@@ -81,9 +92,17 @@ export default {
     }
   },
   methods: {
+    calculateZone() {
+      this.zoneLeft = this.zoneXCoords[0];
+      this.zoneWidth  = this.zoneXCoords[1] - this.zoneXCoords[0]; 
+      this.zoneTop = this.zoneYCoords[0];
+      this.zoneHeight  = this.zoneYCoords[1] - this.zoneYCoords[0];                 
+    },
     showDetectionZoneInfo() {}
   },
-  mounted() {}
+  mounted() {
+    this.calculateZone();
+  }
 };
 </script>
 
@@ -100,9 +119,12 @@ export default {
   position: relative;
 }
 
-.camera__canvas {
-  scroll: none;
+.zone-overlay {  
   position: absolute;
+  width: 150px;
+  height: 150px;
+  background-color: cyan;
+  opacity: 0.5;
   top: 0;
   left: 0;
 }
