@@ -37,14 +37,13 @@ export default {
       mqttHostPort: "1883",
       valid: true,
       mqttHostAddressRules: [
-        v =>
-          !!v ||
+        v => !!v ||
           "MQTT Host address is required" /* ,
         v => v.match(urlReg)|| 'Must be a valid url' */
       ],
       mqttHostPortRules: [
         v => !!v || "MQTT Port required",
-        v => v.match(`^[0-9]+$`) || "E-mail must be valid"
+        v => /^[0-9]+$/.test(v) || "Must be a number"
       ]
     };
   },
