@@ -9,7 +9,7 @@ export default new Vuex.Store({
   },
   mutations: {
     addCamera(state, cameraName) {
-      if (!state.cameras.includes(cameraName)) {
+      if (!state.cameras.find(camera => camera.name === cameraName)) {
         state.cameras.push({
           name: cameraName,
           isDetectionEnabled: true,
