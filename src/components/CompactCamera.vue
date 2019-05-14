@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import eventBus from "@/eventBus";
 
 export default {
   props: ["index"],
@@ -39,7 +40,7 @@ export default {
       return this.$store.state.cameras[this.index];
     }
   },
-  methods: {
+  methods: {    
     toggleIsDetectionEnabled() {
       this.camera.isDetectionEnabled = !this.camera.isDetectionEnabled;
     }
@@ -47,8 +48,21 @@ export default {
   data() {
     return {
       currentFrame: null,
+      frameEvent: null,      
       placeHolder: require("@/assets/image-placeholder.png")
     };
+  },
+  mounted() {
+    this.frameEvent = `camera/frame/${this.camera.name}`
+    eventBus.$on(this.frameEvent, (currentFrame) => {      
+      this.currentFrame = currentFrame;
+    });
+    
+  },
+  beforeDestroy() {
+    console.log(this);
+    console.log('destroy');
+    eventBus.$off(this.frameEvent);
   }
 };
 </script>

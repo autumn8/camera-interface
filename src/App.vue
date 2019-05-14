@@ -62,11 +62,8 @@ export default {
       ]
     };
   },
-  mounted() {
-    mqtt.init();
-    mqtt.client.on("message", (topic, message) => {
-      this.frame = "data:image/jpeg;base64," + message.toString("base64");
-    });
+  mounted() {    
+    mqtt.init();    
   }
 };
 </script>

@@ -1,7 +1,8 @@
 import mqtt from "mqtt";
 import store from "@/store";
+import eventBus from "@/eventBus";
 
-const hostname = "mqtt://localhost:9001";
+const hostname = "mqtt://192.168.8.103:9001";
 const client = mqtt.connect(hostname);
 
 function init() {
@@ -13,7 +14,7 @@ function init() {
   });
 
   client.on("message", (topic, message) => {
-    console.log("topic", topic);
+    //console.log("topic", topic);
     if (topic.includes("camera/connected")) {
       const routeSegments = topic.split("/");
       const cameraName = routeSegments[routeSegments.length - 1];
@@ -28,6 +29,10 @@ function init() {
       const routeSegments = topic.split("/");
       const cameraName = routeSegments[routeSegments.length - 1];
       const frame = `data:image/jpeg;base64, ${message.toString("base64")}`;
+      /* It feels weird emitting an event with a second event mechanism when mqtt message is an event itself,
+      however we don't have an easy way of sub/unsubbing from a unique message and we need that to prevent either killing
+      all existing subsriptions for the client, or ending up with a memory leak so this is the solution for now.*/
+      eventBus.$emit(`camera/frame/${cameraName}`, frame);
     }
   });
 }

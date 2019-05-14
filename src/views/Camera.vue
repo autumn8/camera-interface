@@ -59,9 +59,9 @@
                     </v-flex>                    
                   </v-flex>
                 </v-layout>
-                <!-- <div class="text-xs-center">
+                <div class="text-xs-center">
                 <v-btn color="success" @click="saveSettings">Save</v-btn>
-                </div>-->
+                </div>
               </v-container>
             </v-card>
           </v-flex>
@@ -72,7 +72,8 @@
 </template>
 
 <script>
-//$route.params.id
+import eventBus from "@/eventBus";
+
 export default {
   data() {
     return {
@@ -83,6 +84,7 @@ export default {
       zoneXCoords: [0, 200],
       zoneYCoords: [150, 250],      
       currentFrame: null,
+      frameEvent: null,
       placeHolder: require("@/assets/image-placeholder.png")
     };
   },
@@ -98,10 +100,23 @@ export default {
       this.zoneTop = this.zoneYCoords[0];
       this.zoneHeight  = this.zoneYCoords[1] - this.zoneYCoords[0];                 
     },
-    showDetectionZoneInfo() {}
+    showDetectionZoneInfo() {},
+    saveSettings() {
+
+    }
   },
   mounted() {
+    this.frameEvent = `camera/frame/${this.camera.name}`
+    eventBus.$on(this.frameEvent, (currentFrame) => {
+      console.log('got a frame');
+      this.currentFrame = currentFrame;      
+    })
     this.calculateZone();
+  },
+  beforeDestroy() {
+    console.log(this);
+    console.log('destroy');
+    eventBus.$off(this.frameEvent);
   }
 };
 </script>
