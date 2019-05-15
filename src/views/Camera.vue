@@ -5,34 +5,21 @@
         <v-layout row wrap>
           <v-flex>
             <v-card>
-              <div class="camera-container">
+              <div class="camera-container" ref="camcam">
                 <v-img :src="currentFrame || placeHolder" height="300px" aspect-ratio="0.25"></v-img>
 
-                <VueDragResize
+                <vue-drag-resize v-if="isZoneEditingEnabled"
                   class="zone-overlay"
-                  :isActive="true"
+                  :isActive="true"                  
+                  :x="zoneLeft" 
+                  :y="zoneTop"                 
+                  :w="zoneWidth"
+                  :h="zoneHeight"
                   :parentLimitation="true"
-                  :w="200"
-                  :h="200"
                   v-on:resizing="resize"
                   v-on:dragging="resize"
-                >
-                  
-                  <p>TOP: {{ top }}</p>
-                  <p>LEFT: {{ left }}</p>
-                  <p>WIDTH: {{ width }}</p>
-                  <p>HEIGHT: {{ height }}</p>
-                </VueDragResize>
-
-                <!-- <div
-                  v-if="camera.isZoneEnabled"
-                  class="zone-overlay"
-                  v-bind:style="{ 
-                    width: zoneWidth + 'px', 
-                    left: zoneLeft + 'px',
-                    top: zoneTop + 'px', 
-                    height: zoneHeight + 'px'}"
-                ></div> -->
+                > 
+                </vue-drag-resize>                
               </div>
 
               <v-card-actions>
@@ -49,49 +36,20 @@
                         camera.isDetectionEnabled ? 'on' : 'off'
                       }`
                     "
-                  ></v-switch>
-                  <div class="info-icon-container">
-                    <v-btn icon @click="showDetectionZoneInfo">
-                      <v-icon class="stuff" color="teal">info</v-icon>
-                    </v-btn>
-                  </div>
+                  ></v-switch>                  
                 </v-layout>
 
                 <v-layout>
                   <v-switch
                     :disabled="!camera.isDetectionEnabled"
                     :class="{ 'half-opacity': !camera.isDetectionEnabled }"
-                    v-model="camera.isZoneEnabled"
-                    :label="`Zones are ${camera.isZoneEnabled ? 'on' : 'off'}`"
-                  ></v-switch>
-                  <v-btn icon @click="showDetectionZoneInfo">
-                    <v-icon class="stuff" color="teal">info</v-icon>
-                  </v-btn>
-                </v-layout>
-                <v-layout v-if="camera.isZoneEnabled">
-                  <v-flex xs12>
-                    <v-flex>
-                      <v-range-slider
-                        @input="calculateZone"
-                        v-model="zoneXCoords"
-                        label="Left - Right"
-                        :max="345"
-                        :min="0"
-                        :step="10"
-                      ></v-range-slider>
-                    </v-flex>
-                    <v-flex>
-                      <v-range-slider
-                        @input="calculateZone"
-                        v-model="zoneYCoords"
-                        label="Top - Bottom"
-                        :max="300"
-                        :min="0"
-                        :step="10"
-                      ></v-range-slider>
-                    </v-flex>
-                  </v-flex>
-                </v-layout>
+                    v-model="isZoneEditingEnabled"
+                    label="Edit zone"
+                  ></v-switch> 
+                  <v-btn icon @click="restore">
+                    <v-icon class="stuff" color="teal">fullscreen</v-icon>
+                  </v-btn>                 
+                </v-layout>                
                 <div class="text-xs-center">
                   <v-btn color="success" @click="saveSettings">Save</v-btn>
                 </div>
@@ -110,23 +68,20 @@ import eventBus from "@/eventBus";
 
 export default {
   components: {
-    VueDragResize
+    'vue-drag-resize' : VueDragResize
   },
   data() {
-    return {
-      zoneWidth: 0,
-      zoneHeight: 0,
-      zoneTop: 0,
-      zoneLeft: 0,
-      zoneXCoords: [0, 200],
-      zoneYCoords: [150, 250],
+    return {      
       currentFrame: null,
       frameEvent: null,
       placeHolder: require("@/assets/image-placeholder.png"),
-      width: 0,
-      height: 0,
-      top: 0,
-      left: 0
+      zoneParentWidth: 0,
+      zoneParentHeight: 0,
+      zoneWidth: 100,  //change to full width of parent
+      zoneHeight: 100,
+      zoneTop: 0,
+      zoneLeft: 0,
+      isZoneEditingEnabled: false
     };
   },
   computed: {
@@ -134,33 +89,33 @@ export default {
       return this.$store.state.cameras[this.$route.params.index];
     }
   },
-  methods: {
-    calculateZone() {
-      this.zoneLeft = this.zoneXCoords[0];
-      this.zoneWidth = this.zoneXCoords[1] - this.zoneXCoords[0];
-      this.zoneTop = this.zoneYCoords[0];
-      this.zoneHeight = this.zoneYCoords[1] - this.zoneYCoords[0];
+  methods: {        
+    saveSettings() {            
     },
-    showDetectionZoneInfo() {},
-    saveSettings() {},
-    resize(newRect) {
-      this.width = newRect.width;
-      this.height = newRect.height;
-      this.top = newRect.top;
-      this.left = newRect.left;
+    resize(zoneRect) {
+      this.zoneWidth = zoneRect.width;
+      this.zoneHeight = zoneRect.height;
+      this.zoneTop = zoneRect.top;
+      this.zoneLeft = zoneRect.left;
+    },
+    restore() {
+      this.zoneWidth = this.zoneParentWidth;
+      this.zoneHeight = this.zoneParentHeight;
+      this.zoneTop = 0;
+      this.zoneLeft = 0;
     }
   },
   mounted() {
+    this.zoneParentWidth = this.$refs.camcam.offsetWidth;
+    this.zoneParentHeight = this.$refs.camcam.offsetHeight;
+    this.zoneWidth = this.zoneParentWidth;
+    this.zoneHeight = this.zoneParentHeight;
     this.frameEvent = `camera/frame/${this.camera.name}`;
-    eventBus.$on(this.frameEvent, currentFrame => {
-      console.log("got a frame");
+    eventBus.$on(this.frameEvent, currentFrame => {      
       this.currentFrame = currentFrame;
-    });
-    this.calculateZone();
+    });    
   },
-  beforeDestroy() {
-    console.log(this);
-    console.log("destroy");
+  beforeDestroy() {    
     eventBus.$off(this.frameEvent);
   }
 };
@@ -184,7 +139,7 @@ export default {
   width: 150px;
   height: 150px;
   background-color: cyan;
-  opacity: 0.5;
+  opacity: 0.3;
   top: 0;
   left: 0;
 }
