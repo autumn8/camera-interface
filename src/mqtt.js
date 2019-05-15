@@ -1,20 +1,26 @@
 import mqtt from "mqtt";
 import store from "@/store";
 import eventBus from "@/eventBus";
+let client;
 
-const hostname = "mqtt://192.168.8.103:9001";
-const client = mqtt.connect(hostname);
+
+function hasMQTTHostProps() {
+  const {mqttHostAddress, mqttHostPort} = window.localStorage;
+  return !!mqttHostAddress && mqttHostPort;
+}
 
 function init() {
-  client.on("connect", function () {
+  //todo consider promise to handle routing in app if mqtt settings aren't in localstorage;
+  const { mqttHostAddress, mqttHostPort } = window.localStorage;
+  const host = `${mqttHostAddress}:${mqttHostPort}`;
+  client = mqtt.connect(host);
+  client.on("connect", function() {
     console.log("connected");
     client.subscribe("camera/connected/#");
-    //client.subscribe("camera/image/inference");
-    client.subscribe("camera/frame/camera1");
   });
 
   client.on("message", (topic, message) => {
-    //console.log("topic", topic);
+    console.log("topic", topic);
     if (topic.includes("camera/connected")) {
       const routeSegments = topic.split("/");
       const cameraName = routeSegments[routeSegments.length - 1];
@@ -24,7 +30,7 @@ function init() {
         client.subscribe(`camera/frame/${cameraName}`);
         return;
       }
-      if (payload ==0) eventBus.$emit(`camera/frame/${cameraName}`, null);
+      if (payload == 0) eventBus.$emit(`camera/frame/${cameraName}`, null);
     }
     if (topic.includes("camera/frame")) {
       const routeSegments = topic.split("/");
