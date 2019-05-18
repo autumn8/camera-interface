@@ -4,14 +4,8 @@
 
     <v-card-actions>
       <span class="camera-name"> {{ camera.name }}</span>
-      <v-spacer></v-spacer>
-      <v-btn
-        v-model="camera.isDetectionEnabled"
-        icon
-        @click="toggleIsDetectionEnabled"
-      >
-        <v-icon :color="detectionEnabledClass">portrait</v-icon>
-      </v-btn>
+      <v-spacer></v-spacer>      
+        
 
       <!--<v-btn :disabled="!detectionEnabled" v-model="detectionZoneEnabled" icon @click="detectionZoneEnabled = !detectionZoneEnabled">
         <v-icon :color="detectionZoneEnabledClass">crop_free</v-icon>
@@ -29,22 +23,11 @@ import eventBus from "@/eventBus";
 
 export default {
   props: ["index"],
-  computed: {
-    detectionEnabledClass() {
-      return this.camera.isDetectionEnabled ? "green" : "dark-grey";
-    },
-    detectionZoneEnabledClass() {
-      return this.camera.isDetectionZoneEnabled ? "green" : "dark-grey";
-    },
+  computed: {    
     camera() {
       return this.$store.state.cameras[this.index];
     }
-  },
-  methods: {    
-    toggleIsDetectionEnabled() {
-      this.camera.isDetectionEnabled = !this.camera.isDetectionEnabled;
-    }
-  },
+  },  
   data() {
     return {
       currentFrame: null,
@@ -59,9 +42,7 @@ export default {
     });
     
   },
-  beforeDestroy() {
-    console.log(this);
-    console.log('destroy');
+  beforeDestroy() {    
     eventBus.$off(this.frameEvent);
   }
 };

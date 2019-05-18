@@ -6,7 +6,7 @@
           <v-flex>
             <v-card>
               <div class="camera-container" ref="camcam">
-                <v-img :src="currentFrame || placeHolder" height="300px" aspect-ratio="0.25"></v-img>
+                <v-img :src="currentFrame || placeHolder" aspect-ratio="1"></v-img>
 
                 <vue-drag-resize v-if="isZoneEditingEnabled"
                   class="zone-overlay"
@@ -46,7 +46,7 @@
                     v-model="isZoneEditingEnabled"
                     label="Edit zone"
                   ></v-switch> 
-                  <v-btn icon @click="restore">
+                  <v-btn v-if="camera.isDetectionEnabled && isZoneEditingEnabled && (zoneWidth < zoneParentWidth || zoneHeight < zoneParentHeight)" icon @click="restore">
                     <v-icon class="stuff" color="teal">fullscreen</v-icon>
                   </v-btn>                 
                 </v-layout>                
@@ -93,7 +93,7 @@ export default {
     saveSettings() {            
     },
     resize(zoneRect) {
-      this.zoneWidth = zoneRect.width;
+      this.zoneWidth = zoneRect.width ;
       this.zoneHeight = zoneRect.height;
       this.zoneTop = zoneRect.top;
       this.zoneLeft = zoneRect.left;
@@ -108,8 +108,10 @@ export default {
   mounted() {
     this.zoneParentWidth = this.$refs.camcam.offsetWidth;
     this.zoneParentHeight = this.$refs.camcam.offsetHeight;
-    this.zoneWidth = this.zoneParentWidth;
-    this.zoneHeight = this.zoneParentHeight;
+    this.zoneWidth = this.zoneParentWidth * this.camera.zoneWidth;
+    this.zoneHeight = this.zoneParentHeight * this.camera.zoneHeight;
+    this.zoneLeft = this.zoneParentWidth * this.camera.zoneX;
+    this.zoneTop = this.zoneParentHeight * this.camera.zoneY;    
     this.frameEvent = `camera/frame/${this.camera.name}`;
     eventBus.$on(this.frameEvent, currentFrame => {      
       this.currentFrame = currentFrame;
