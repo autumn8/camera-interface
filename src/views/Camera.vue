@@ -8,18 +8,18 @@
               <div class="camera-container" ref="camcam">
                 <v-img :src="currentFrame || placeHolder" aspect-ratio="1"></v-img>
 
-                <vue-drag-resize v-if="isZoneEditingEnabled"
+                <vue-drag-resize
+                  v-if="isZoneEditingEnabled"
                   class="zone-overlay"
-                  :isActive="true"                  
-                  :x="zoneLeft" 
-                  :y="zoneTop"                 
+                  :isActive="true"
+                  :x="zoneLeft"
+                  :y="zoneTop"
                   :w="zoneWidth"
                   :h="zoneHeight"
                   :parentLimitation="true"
                   v-on:resizing="resize"
                   v-on:dragging="resize"
-                > 
-                </vue-drag-resize>                
+                ></vue-drag-resize>
               </div>
 
               <v-card-actions>
@@ -36,7 +36,7 @@
                         camera.isDetectionEnabled ? 'on' : 'off'
                       }`
                     "
-                  ></v-switch>                  
+                  ></v-switch>
                 </v-layout>
 
                 <v-layout>
@@ -45,11 +45,15 @@
                     :class="{ 'half-opacity': !camera.isDetectionEnabled }"
                     v-model="isZoneEditingEnabled"
                     label="Edit zone"
-                  ></v-switch> 
-                  <v-btn v-if="camera.isDetectionEnabled && isZoneEditingEnabled && (zoneWidth < zoneParentWidth || zoneHeight < zoneParentHeight)" icon @click="restore">
+                  ></v-switch>
+                  <v-btn
+                    v-if="camera.isDetectionEnabled && isZoneEditingEnabled && (zoneWidth < zoneParentWidth || zoneHeight < zoneParentHeight)"
+                    icon
+                    @click="maximizeZoneSize"
+                  >
                     <v-icon class="stuff" color="teal">fullscreen</v-icon>
-                  </v-btn>                 
-                </v-layout>                
+                  </v-btn>
+                </v-layout>
                 <div class="text-xs-center">
                   <v-btn color="success" @click="saveSettings">Save</v-btn>
                 </div>
@@ -65,19 +69,21 @@
 <script>
 import VueDragResize from "vue-drag-resize";
 import eventBus from "@/eventBus";
+import mqtt from "@/mqtt";
+console.log(mqtt);
 
 export default {
   components: {
-    'vue-drag-resize' : VueDragResize
+    "vue-drag-resize": VueDragResize
   },
   data() {
-    return {      
+    return {
       currentFrame: null,
       frameEvent: null,
       placeHolder: require("@/assets/image-placeholder.png"),
       zoneParentWidth: 0,
       zoneParentHeight: 0,
-      zoneWidth: 100,  //change to full width of parent
+      zoneWidth: 100, //change to full width of parent
       zoneHeight: 100,
       zoneTop: 0,
       zoneLeft: 0,
@@ -89,20 +95,32 @@ export default {
       return this.$store.state.cameras[this.$route.params.index];
     }
   },
-  methods: {        
-    saveSettings() {            
+  methods: {
+    saveSettings() {
+      mqtt.client.publish(
+        `camera/settingsupdate/${this.camera.name}`,
+        JSON.stringify(this.camera)
+      );
     },
     resize(zoneRect) {
-      this.zoneWidth = zoneRect.width ;
-      this.zoneHeight = zoneRect.height;
-      this.zoneTop = zoneRect.top;
-      this.zoneLeft = zoneRect.left;
+      this.camera.zoneWidth = zoneRect.width / this.zoneParentWidth;
+      this.camera.zoneHeight = zoneRect.height / this.zoneParentHeight;
+      this.camera.zoneX = zoneRect.left / this.zoneParentWidth;
+      this.camera.zoneY = zoneRect.top / this.zoneParentHeight;
+      this.zoneWidth = this.camera.zoneWidth / this.zoneParentWidth;
+      this.zoneHeight = this.zoneParentHeight * this.camera.zoneHeight;
+      this.zoneLeft = this.zoneParentWidth * this.camera.zoneX;
+      this.zoneTop = this.zoneParentHeight * this.camera.zoneY;
     },
-    restore() {
-      this.zoneWidth = this.zoneParentWidth;
-      this.zoneHeight = this.zoneParentHeight;
-      this.zoneTop = 0;
-      this.zoneLeft = 0;
+    maximizeZoneSize() {
+      this.camera.zoneWidth = 1;
+      this.camera.zoneHeight = 1;
+      this.camera.zoneX = 0;
+      this.camera.zoneY = 0;
+      this.zoneWidth = this.zoneParentWidth * this.camera.zoneWidth;
+      this.zoneHeight = this.zoneParentHeight * this.camera.zoneHeight;
+      this.zoneLeft = this.zoneParentWidth * this.camera.zoneX;
+      this.zoneTop = this.zoneParentHeight * this.camera.zoneY;
     }
   },
   mounted() {
@@ -111,13 +129,13 @@ export default {
     this.zoneWidth = this.zoneParentWidth * this.camera.zoneWidth;
     this.zoneHeight = this.zoneParentHeight * this.camera.zoneHeight;
     this.zoneLeft = this.zoneParentWidth * this.camera.zoneX;
-    this.zoneTop = this.zoneParentHeight * this.camera.zoneY;    
+    this.zoneTop = this.zoneParentHeight * this.camera.zoneY;
     this.frameEvent = `camera/frame/${this.camera.name}`;
-    eventBus.$on(this.frameEvent, currentFrame => {      
+    eventBus.$on(this.frameEvent, currentFrame => {
       this.currentFrame = currentFrame;
-    });    
+    });
   },
-  beforeDestroy() {    
+  beforeDestroy() {
     eventBus.$off(this.frameEvent);
   }
 };

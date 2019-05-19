@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import mqtt from "@/mqtt";
+
 
 export default {
   name: "app",
@@ -63,7 +63,7 @@ export default {
     };
   },
   mounted() {    
-    mqtt.init();    
+     
   }
 };
 </script>

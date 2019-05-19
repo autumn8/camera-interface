@@ -2,8 +2,8 @@
   <v-layout justify-center>
     <v-flex xs12 sm6>
       <v-container fluid grid-list-md>
-        <v-layout row wrap>
-          <v-flex v-for="(camera, index) in cameras" :key="index">
+        <v-layout column>
+          <v-flex xs12 v-for="(camera, index) in cameras" :key="index">
             <compact-camera :index="index"></compact-camera>            
           </v-flex>
           <div class="text-xs-center no-cameras" v-if="!cameras.length">No cameras found</div>
