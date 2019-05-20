@@ -16,19 +16,29 @@ Vue.config.productionTip = false;
 
 const router = new VueRouter({
   routes: [
-    { 
+    {
       path: "/settings",
       component: Settings
     },
-    { 
+    {
       path: "/camera/:index",
       component: Camera,
       beforeEnter: (to, from, next) => {
-        if (!store.state.cameras.length) next("/");
-        next();
+        const { mqttHostAddress, mqttHostPort } = window.localStorage;
+        if (!mqttHostAddress || !mqttHostPort) next("/settings");
+        else if (!store.state.cameras.length) next("/");
+        else next();
       }
     },
-    { path: "/", component: Home }
+    {
+      path: "/",
+      component: Home,
+      beforeEnter: (to, from, next) => {
+        const { mqttHostAddress, mqttHostPort } = window.localStorage;
+        if (!mqttHostAddress || !mqttHostPort) next("/settings");
+        else next();
+      }
+    }
   ]
 });
 
