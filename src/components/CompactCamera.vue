@@ -1,7 +1,7 @@
 <template>
   
       <v-card>
-        <v-img :src="currentFrame || placeHolder" height="300px" aspect-ratio="1"></v-img>
+        <v-img :src="currentFrame || placeHolder" aspect-ratio="1.333"></v-img>
         <v-card-actions>
           <span class="camera-name">{{ camera.name }}</span>
           <v-spacer></v-spacer>

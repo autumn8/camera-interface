@@ -6,10 +6,10 @@
           <v-flex>
             <v-card>
               <div class="camera-container" ref="camcam">
-                <v-img :src="currentFrame || placeHolder" aspect-ratio="1"></v-img>
+                <v-img :src="currentFrame || placeHolder" aspect-ratio="1.333"></v-img>
 
                 <vue-drag-resize
-                  v-if="isZoneEditingEnabled"
+                  v-if="camera.isDetectionEnabled && isZoneEditingEnabled"
                   class="zone-overlay"
                   :isActive="true"
                   :x="zoneLeft"
@@ -99,7 +99,8 @@ export default {
     saveSettings() {
       mqtt.client.publish(
         `camera/settingsupdate/${this.camera.name}`,
-        JSON.stringify(this.camera)
+        JSON.stringify(this.camera),
+        {retain: true}
       );
     },
     resize(zoneRect) {
@@ -156,6 +157,7 @@ export default {
 
 .zone-overlay {
   position: absolute;
+  border: 2px solid white;
   width: 150px;
   height: 150px;
   background-color: cyan;
