@@ -6,17 +6,14 @@ const host = `${mqttHostAddress}:${mqttHostPort}`;
 const client = mqtt.connect(host);
 client.on("connect", function() {
   console.log("connected");
-  client.subscribe("camera/connected/#");  
+  client.subscribe("camera/connected/#");
 });
 client.on("message", (topic, message) => {
   const payload = message.toString();
-  console.log("topic", topic);
-  /* if (topic.includes("camera/settingsupdate")) {
-    console.log("initialized message");
-    console.log(JSON.parse(payload));
-    
-  } */
+
   if (topic.includes("camera/connected")) {
+    console.log("topic", topic);
+    console.log(payload);
     const routeSegments = topic.split("/");
     const cameraName = routeSegments[routeSegments.length - 1];
     if (payload === "True") {
@@ -25,7 +22,7 @@ client.on("message", (topic, message) => {
       eventBus.$emit(`camera/frame/${cameraName}`, null);
     }
   }
-  if (topic.includes("camera/settingsupdate")){
+  if (topic.includes("camera/settingsupdate")) {
     const cameraSettings = JSON.parse(payload);
     const routeSegments = topic.split("/");
     const cameraName = routeSegments[routeSegments.length - 1];
@@ -42,8 +39,6 @@ client.on("message", (topic, message) => {
     eventBus.$emit(`camera/frame/${cameraName}`, frame);
   }
 });
-
-
 export default {
   client
 };
