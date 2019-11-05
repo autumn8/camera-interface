@@ -1,5 +1,9 @@
 # camera-interface
 
+MQTT streaming camera interface for viewing images from connected cameras, with basic camera functionality toggling.
+
+Needs to connect to an MQTT broker and expects MQTT frame payloads.
+
 ## Project setup
 ```
 npm install
@@ -10,17 +14,5 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
 ```
