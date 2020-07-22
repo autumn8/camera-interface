@@ -55,6 +55,11 @@ export default {
           to: "/"
         },
         {
+          action: "camera_alt",
+          title: "Controls",
+          to: "/controls"
+        },
+        {
           action: "settings",
           title: "Settings",
           to: "/settings"
@@ -62,9 +67,7 @@ export default {
       ]
     };
   },
-  mounted() {    
-     
-  }
+  mounted() {}
 };
 </script>
 

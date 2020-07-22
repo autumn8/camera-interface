@@ -19,6 +19,19 @@
               required
             ></v-text-field>
 
+            <v-text-field
+              v-model="username"
+              label="Username"
+              required
+            ></v-text-field>
+
+            <v-text-field
+              v-model="password"
+              label="Password"
+              type="password"
+              required
+            ></v-text-field>
+
             <v-btn :disabled="!valid" color="success" @click="saveSettings"
               >Save</v-btn
             >
@@ -35,6 +48,8 @@ export default {
     return {
       mqttHostAddress: "mqtt://localhost",
       mqttHostPort: "1883",
+      username: "",
+      password: "",
       valid: true,
       mqttHostAddressRules: [
         v => !!v ||
@@ -54,11 +69,16 @@ export default {
     if (localStorage.mqttHostPort) {
       this.mqttHostPort = localStorage.mqttHostPort;
     }
+    if (localStorage.username) {
+      this.username = localStorage.username;
+    }
   },
   methods: {
     saveSettings() {
       localStorage.mqttHostAddress = this.mqttHostAddress;
       localStorage.mqttHostPort = this.mqttHostPort;
+      localStorage.username = this.username;
+      localStorage.password = this.password;
     }
   }
 };
