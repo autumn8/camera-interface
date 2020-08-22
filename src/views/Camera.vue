@@ -6,7 +6,10 @@
           <v-flex>
             <v-card>
               <div class="camera-container" ref="camcam">
-                <v-img :src="currentFrame || placeHolder" aspect-ratio="1.333"></v-img>
+                <v-img
+                  :src="currentFrame || placeHolder"
+                  aspect-ratio="1.333"
+                ></v-img>
 
                 <vue-drag-resize
                   v-if="camera.isDetectionEnabled && isZoneEditingEnabled"
@@ -23,11 +26,30 @@
               </div>
 
               <v-card-actions>
-                <span class="camera-name">{{camera.name}}</span>
+                <span class="camera-name">{{ camera.name }}</span>
                 <v-spacer></v-spacer>
               </v-card-actions>
 
               <v-container>
+                <v-layout>
+                  <v-switch
+                    v-model="isCameraStreaming"
+                    :label="
+                      `Camera streaming is ${isCameraStreaming ? 'on' : 'off'}`
+                    "
+                    @change="onCameraStreamingStateChange()"
+                  ></v-switch>
+                </v-layout>
+                <v-layout>
+                  <v-switch
+                    v-model="isLedOn"
+                    :label="`Led is ${isLedOn ? 'on' : 'off'}`"
+                    @change="onLedStateChange()"
+                  ></v-switch>
+                </v-layout>
+                <v-layout>
+                  <v-btn @click="onAlarmLightClick()">Alarm lighting</v-btn>
+                </v-layout>
                 <v-layout>
                   <v-switch
                     v-model="camera.isDetectionEnabled"
@@ -47,7 +69,12 @@
                     label="Edit zone"
                   ></v-switch>
                   <v-btn
-                    v-if="camera.isDetectionEnabled && isZoneEditingEnabled && (zoneWidth < zoneParentWidth || zoneHeight < zoneParentHeight)"
+                    v-if="
+                      camera.isDetectionEnabled &&
+                        isZoneEditingEnabled &&
+                        (zoneWidth < zoneParentWidth ||
+                          zoneHeight < zoneParentHeight)
+                    "
                     icon
                     @click="maximizeZoneSize"
                   >
@@ -78,6 +105,8 @@ export default {
   },
   data() {
     return {
+      isCameraStreaming: false,
+      isLedOn: false,
       currentFrame: null,
       frameEvent: null,
       placeHolder: require("@/assets/image-placeholder.png"),
@@ -96,11 +125,37 @@ export default {
     }
   },
   methods: {
+    onCameraStreamingStateChange() {
+      const onOff = this.isCameraStreaming ? "on" : "off";
+      mqtt.client.publish(`camera/${this.camera.name}/stream/${onOff}`, "", {
+        retain: true
+      });
+    },
+    onAlarmLightClick() {
+      let counter = 0;
+      setInterval(() => {
+        const onOff = counter % 2 === 0 ? "on" : "off";
+        mqtt.client.publish(
+          `led/${this.camera.name}/${onOff}`,
+          JSON.stringify({ color: [255, 0, 0], brightness: 1 }),
+          { retain: true }
+        );
+        counter++;
+      }, 200);
+    },
+    onLedStateChange() {
+      mqtt.client.publish(
+        `led/${this.camera.name}/${this.isLedOn ? "on" : "off"}`,
+        JSON.stringify({ color: [255, 147, 91], brightness: 1 }),
+        { retain: true }
+      );
+      console.log("led state change");
+    },
     saveSettings() {
       mqtt.client.publish(
         `camera/settingsupdate/${this.camera.name}`,
         JSON.stringify(this.camera),
-        {retain: true}
+        { retain: true }
       );
     },
     resize(zoneRect) {

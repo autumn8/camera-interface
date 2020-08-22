@@ -29,25 +29,29 @@
           @click.stop="drawer = !drawer"
           class="menu"
         ></v-toolbar-side-icon>
+        <v-spacer></v-spacer>
         <v-layout justify-center>
           <v-icon class="text-md-center" large>security</v-icon>
         </v-layout>
-      </v-toolbar>            
+        <v-spacer></v-spacer>
+        <Microphone-Recorder />
+      </v-toolbar>
       <router-view></router-view>
     </v-app>
   </div>
 </template>
 
 <script>
-
+import MicrophoneRecorder from "@/components/MicrophoneRecorder";
 
 export default {
   name: "app",
+  components: { MicrophoneRecorder },
   data() {
-    return {      
+    return {
       image: null,
       xpos: 0,
-      drawer: null,
+      drawer: false,
       items: [
         {
           action: "camera_alt",
