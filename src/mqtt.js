@@ -1,7 +1,12 @@
 import mqtt from "mqtt";
 import store from "@/store";
 import eventBus from "@/eventBus";
-const { mqttHostAddress, mqttHostPort, username, password } = window.localStorage;
+const {
+  mqttHostAddress,
+  mqttHostPort,
+  username,
+  password
+} = window.localStorage;
 const host = `${mqttHostAddress}:${mqttHostPort}`;
 const client = mqtt.connect(host, { username, password });
 client.on("connect", function() {
@@ -31,7 +36,6 @@ client.on("message", (topic, message) => {
     client.subscribe(`camera/frame/${cameraName}`);
   }
   if (topic.includes("camera/frame")) {
-    console.log('frame');
     const routeSegments = topic.split("/");
     const cameraName = routeSegments[routeSegments.length - 1];
     const frame = `data:image/jpeg;base64, ${message.toString("base64")}`;

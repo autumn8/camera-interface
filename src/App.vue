@@ -36,7 +36,22 @@
         <v-spacer></v-spacer>
         <Microphone-Recorder />
       </v-toolbar>
-      <router-view></router-view>
+
+      <img
+        src="http://192.168.8.107:8080/stream/video.mjpeg"        
+        alt=""
+      />
+      <img
+        src="http://192.168.8.215:8080/stream/video.mjpeg"        
+        alt=""
+      />
+
+      <img
+        src="http://192.168.8.220:8080/stream/video.mjpeg"        
+        alt=""
+      />
+
+      <!-- <router-view></router-view> -->
     </v-app>
   </div>
 </template>
