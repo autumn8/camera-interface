@@ -101,6 +101,9 @@ body {
   padding: 0;
   font-size: 16px;
 }
+img {
+  width:100%;
+}
 
 #app {
   background-color: grey;
